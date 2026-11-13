@@ -1,0 +1,173 @@
+﻿@using System.Linq
+@model IEnumerable<MemberViewModel>
+
+@{
+    ViewData["Title"] = "Members List";
+}
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<header class="d-flex justify-content-end mt-2 mb-4 align-items-center">
+    <a asp-controller="Members"
+       asp-action="Create"
+       class="btn btn-fill fw-medium rounded-pill px-3 py-3">
+        + Add Member
+    </a>
+</header>
+
+<div class="table-responsive" style="overflow: visible;">
+    <table class="table table-borderless align-middle">
+        <thead>
+            <tr>
+                <th><span>Photo</span></th>
+                <th><span>Name</span></th>
+                <th><span>Email</span></th>
+                <th><span>Gender</span></th>
+                <th><span>Phone</span></th>
+                <th><span>Action</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var member in Model)
+                {
+                    <tr>
+                        <td>
+                            <span class="avatar">
+                                <img src="@(string.IsNullOrWhiteSpace(member.Photo)
+                                            ? Url.Content("~/images/User.jpg")
+                                            : Url.Content($"~/images/{member.Photo}"))"
+                                     alt="Member Photo"
+                                     class="rounded-circle"
+                                     style="width: 40px; height: 40px; object-fit: cover;" />
+                            </span>
+                        </td>
+                        <td>
+                            <span>@member.Name</span>
+                        </td>
+                        <td>
+                            <span>@member.Email</span>
+                        </td>
+                        <td>
+                            <span>@member.Gender</span>
+                        </td>
+                        <td>
+                            <span>@member.Phone</span>
+                        </td>
+                        <td class="action position-relative">
+                            <div class="dropdown">
+                                <button class="btn btn-link p-0 border-0"
+                                        type="button"
+                                        id="dropdownMenuButton-@member.Id"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false">
+                                    <img src="~/images/action dots.jpg" alt="Action icon" />
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-start"
+                                    aria-labelledby="dropdownMenuButton-@member.Id">
+                                    <li>
+                                        <a asp-controller="Members"
+                                           asp-action="Details"
+                                           asp-route-id="@member.Id"
+                                           class="dropdown-item d-flex align-items-center gap-3">
+                                            <img src="~/images/info 1.jpg" alt="Info icon" style="width: 20px; height: 20px;" />
+                                            <span>View Member Data</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a asp-controller="Members"
+                                           asp-action="HealthRecordDetails"
+                                           asp-route-id="@member.Id"
+                                           class="dropdown-item d-flex align-items-center gap-3">
+                                            <img src="~/images/info 1.jpg" alt="Health record icon" style="width: 20px; height: 20px;" />
+                                            <span>View Health Record Data</span>
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li>
+                                        <a asp-controller="Members"
+                                           asp-action="Edit"
+                                           asp-route-id="@member.Id"
+                                           class="dropdown-item d-flex align-items-center gap-3">
+                                            <img src="~/images/edit.jpg" alt="Edit icon" style="width: 20px; height: 20px;" />
+                                            <span>Edit Member Data</span>
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li>
+                                        <a asp-controller="Members"
+                                           asp-action="Delete"
+                                           asp-route-id="@member.Id"
+                                           class="dropdown-item d-flex align-items-center gap-3 text-danger">
+                                            <img src="~/images/x-circle 1.jpg" alt="Delete icon" style="width: 20px; height: 20px;" />
+                                            <span>Delete</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-center py-4">
+                        <i class="bi bi-person-workspace display-1 text-muted"></i>
+                        <h4 class="mt-3 text-muted">No Members Available</h4>
+                        <p class="text-muted">Add your first Member to get started</p>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const alerts = document.querySelectorAll(".alert");
+
+            alerts.forEach(function (alertBox) {
+                setTimeout(function () {
+                    alertBox.style.transition = "opacity 0.5s ease";
+                    alertBox.style.opacity = "0";
+
+                    setTimeout(function () {
+                        alertBox.remove();
+                    }, 500);
+                }, 1500);
+            });
+        });
+    </script>
+}
